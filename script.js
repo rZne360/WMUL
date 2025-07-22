@@ -1,4 +1,4 @@
-// Your Firebase config
+// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyD_TBfmoZaYVGTQtblDMsUsNi_odpQKfQ4",
   authDomain: "woodle-3eaa5.firebaseapp.com",
@@ -12,49 +12,85 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-let roomCode = "";
-let solutionWord = "TREND"; // can be made dynamic later
+let roomCode, playerId, playerName, currentWord;
+
+function createRoom() {
+  roomCode = Math.random().toString(36).substr(2, 5).toUpperCase();
+  playerName = document.getElementById("player-name").value || "Player";
+  playerId = Date.now().toString();
+
+  currentWord = getRandomWord();
+  db.ref(`rooms/${roomCode}`).set({
+    currentWord,
+    status: "started",
+    players: {
+      [playerId]: {
+        name: playerName,
+        guesses: [],
+        status: "active"
+      }
+    }
+  });
+
+  startGame();
+}
 
 function joinRoom() {
-  roomCode = document.getElementById("roomCodeInput").value.toUpperCase();
-  if (!roomCode) return alert("Enter a room code");
+  roomCode = document.getElementById("room-code").value.toUpperCase();
+  playerName = document.getElementById("player-name").value || "Player";
+  playerId = Date.now().toString();
 
-  document.getElementById("roomDisplay").innerText = roomCode;
-  document.querySelector(".room-setup").classList.add("hidden");
-  document.getElementById("gameArea").classList.remove("hidden");
+  db.ref(`rooms/${roomCode}/players/${playerId}`).set({
+    name: playerName,
+    guesses: [],
+    status: "active"
+  });
 
-  listenForGuesses();
+  db.ref(`rooms/${roomCode}/currentWord`).once("value", snapshot => {
+    currentWord = snapshot.val();
+    startGame();
+  });
+}
+
+function startGame() {
+  document.getElementById("room-ui").classList.add("hidden");
+  document.getElementById("game-ui").classList.remove("hidden");
+  document.getElementById("room-info").innerText = `Room: ${roomCode}`;
+  listenToGuesses();
 }
 
 function submitGuess() {
-  const input = document.getElementById("guessInput");
-  const guess = input.value.trim().toUpperCase();
-
-  if (guess.length !== 5) {
-    alert("Please enter a 5-letter word.");
-    return;
-  }
-
-  const guessRef = db.ref(`game/${roomCode}/guesses`);
-  guessRef.push(guess);
-  input.value = "";
+  const guess = document.getElementById("guess-input").value.toUpperCase();
+  if (guess.length !== 5) return alert("Enter a 5-letter word.");
+  db.ref(`rooms/${roomCode}/players/${playerId}/guesses`).push(guess);
+  document.getElementById("guess-input").value = "";
 }
 
-function listenForGuesses() {
-  const guessRef = db.ref(`game/${roomCode}/guesses`);
-  guessRef.on("child_added", (data) => {
-    const guess = data.val();
-    displayGuess(guess);
-    if (guess === solutionWord) {
-      document.getElementById("messages").innerText = `🎉 Someone guessed it! The word was ${solutionWord}`;
+function listenToGuesses() {
+  db.ref(`rooms/${roomCode}/players/${playerId}/guesses`).on("value", snapshot => {
+    const guesses = snapshot.val() || {};
+    drawBoard(Object.values(guesses));
+  });
+}
+
+function drawBoard(guesses) {
+  const board = document.getElementById("board");
+  board.innerHTML = "";
+  guesses.forEach(guess => {
+    for (let i = 0; i < 5; i++) {
+      const tile = document.createElement("div");
+      tile.classList.add("tile");
+      tile.innerText = guess[i];
+      if (guess[i] === currentWord[i]) tile.classList.add("correct");
+      else if (currentWord.includes(guess[i])) tile.classList.add("present");
+      else tile.classList.add("absent");
+      board.appendChild(tile);
     }
   });
 }
 
-function displayGuess(word) {
-  const board = document.getElementById("board");
-  const div = document.createElement("div");
-  div.textContent = word;
-  board.appendChild(div);
+function getRandomWord() {
+  const words = ["CRANE", "LIGHT", "STONE", "PLANT", "COVER", "FLAME", "BRICK"];
+  return words[Math.floor(Math.random() * words.length)];
 }
 
