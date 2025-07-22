@@ -3,32 +3,29 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Woodle - Multiplayer</title>
-  <link rel="stylesheet" href="style.css"/>
+  <title>Woodle Multiplayer</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Woodle</h1>
-    <div id="room-ui">
-      <input type="text" id="player-name" placeholder="Enter your name" />
-      <button onclick="createRoom()">Create Room</button>
-      <input type="text" id="room-code" placeholder="Room code" />
-      <button onclick="joinRoom()">Join Room</button>
-    </div>
-
-    <div id="game-ui" class="hidden">
-      <div id="room-info"></div>
-      <div id="board" class="board"></div>
-      <input type="text" id="guess-input" maxlength="5" placeholder="Enter 5-letter word"/>
-      <button onclick="submitGuess()">Submit</button>
-    </div>
+  <div class="container" id="lobby">
+    <h1>🌳 Woodle</h1>
+    <input id="playerName" placeholder="Your name"/>
+    <button onclick="createRoom()">Create Room</button><br>
+    <input id="roomCodeInput" placeholder="Room code"/>
+    <button onclick="joinRoom()">Join Room</button>
   </div>
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <div class="container hidden" id="gameScreen">
+    <h2>Room: <span id="roomDisplay"></span></h2>
+    <div id="grid" class="grid"></div>
+    <input id="guessInput" maxlength="5" placeholder="Enter 5 letters"/>
+    <button onclick="submitGuess()">Submit</button>
+    <div id="status"></div>
+  </div>
 
-  <!-- Script -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
+
