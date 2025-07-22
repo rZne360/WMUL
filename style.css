@@ -1,36 +1,45 @@
 body {
-  font-family: Arial;
+  font-family: sans-serif;
   text-align: center;
-  background: #121213;
-  color: white;
-  margin: 0;
-  padding: 0;
+  background: #f1f1f1;
+  margin: 0; padding: 0;
 }
+
 .container {
+  max-width: 500px;
+  margin: 40px auto;
+  background: white;
   padding: 20px;
+  border-radius: 8px;
 }
+
 input, button {
-  margin: 10px;
+  margin: 6px;
   padding: 10px;
   font-size: 16px;
 }
-.board {
+
+.grid {
   display: grid;
-  grid-template-columns: repeat(5, 60px);
+  grid-template-columns: repeat(5, 50px);
   grid-gap: 5px;
   justify-content: center;
   margin: 20px 0;
 }
+
 .tile {
-  width: 60px;
-  height: 60px;
-  border: 2px solid #555;
+  width: 50px; height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-size: 24px;
+  font-weight: bold;
   text-transform: uppercase;
-  line-height: 60px;
-  background: #222;
+  background: #ddd;
 }
-.correct { background: #538d4e; }
-.present { background: #b59f3b; }
-.absent { background: #3a3a3c; }
+
+.correct { background: #6aaa64; color: white; }
+.present { background: #c9b458; color: white; }
+.absent { background: #787c7e; color: white; }
+
 .hidden { display: none; }
