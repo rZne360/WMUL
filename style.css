@@ -63,27 +63,6 @@ body {
 .present { background: #c9b458; color: white; }
 .absent { background: #787c7e; color: white; }
 
-.keyboard {
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  gap: 6px;
-  margin: 10px 0;
-  width: 100%;
-  max-width: 500px;
-}
-
-.key {
-  padding: 12px;
-  background: #eee;
-  text-align: center;
-  cursor: pointer;
-  border-radius: 4px;
-  user-select: none;
-  font-size: 16px;
-}
-
-.key:active { background: #ccc; }
-
 .mobile-input {
   display: flex;
   justify-content: center;
@@ -95,8 +74,10 @@ body {
 .mobile-input input {
   padding: 10px; font-size: 16px; flex: 1;
 }
+
 .mobile-input button {
-  padding: 10px 16px; margin-left: 6px;
+  padding: 10px 16px;
+  margin-left: 6px;
   font-size: 16px;
 }
 
