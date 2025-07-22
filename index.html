@@ -2,24 +2,33 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Woodle Multiplayer</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container" id="lobby">
+  <div id="lobby" class="container">
     <h1>🌳 Woodle</h1>
-    <input id="playerName" placeholder="Your name"/>
-    <button onclick="createRoom()">Create Room</button><br>
-    <input id="roomCodeInput" placeholder="Room code"/>
+    <input id="playerName" placeholder="Your Name" />
+    <button onclick="createRoom()">Create Room</button>
+    <input id="roomCodeInput" placeholder="Room Code" />
     <button onclick="joinRoom()">Join Room</button>
   </div>
 
-  <div class="container hidden" id="gameScreen">
-    <h2>Room: <span id="roomDisplay"></span></h2>
+  <div id="game" class="container hidden">
+    <div class="header">
+      <h2>Room: <span id="roomCodeDisplay"></span></h2>
+      <div id="playersList"></div>
+    </div>
+
     <div id="grid" class="grid"></div>
-    <input id="guessInput" maxlength="5" placeholder="Enter 5 letters"/>
-    <button onclick="submitGuess()">Submit</button>
+    <div id="keyboard" class="keyboard"></div>
+
+    <div class="mobile-input">
+      <input id="guessInput" maxlength="5" placeholder="Enter 5 letters"/>
+      <button onclick="submitGuess()">Submit</button>
+    </div>
+
     <div id="status"></div>
   </div>
 
@@ -28,4 +37,5 @@
   <script src="script.js"></script>
 </body>
 </html>
+
 
