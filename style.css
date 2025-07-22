@@ -1,33 +1,36 @@
 body {
-  font-family: Arial, sans-serif;
-  background: #f2f2f2;
-  padding: 20px;
+  font-family: Arial;
   text-align: center;
+  background: #121213;
+  color: white;
+  margin: 0;
+  padding: 0;
 }
-
-input {
+.container {
+  padding: 20px;
+}
+input, button {
+  margin: 10px;
   padding: 10px;
   font-size: 16px;
-  margin: 10px;
 }
-
-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
+.board {
+  display: grid;
+  grid-template-columns: repeat(5, 60px);
+  grid-gap: 5px;
+  justify-content: center;
+  margin: 20px 0;
 }
-
-.hidden {
-  display: none;
+.tile {
+  width: 60px;
+  height: 60px;
+  border: 2px solid #555;
+  font-size: 24px;
+  text-transform: uppercase;
+  line-height: 60px;
+  background: #222;
 }
-
-#board {
-  margin-top: 20px;
-  font-size: 18px;
-}
-
-#messages {
-  margin-top: 10px;
-  color: green;
-}
-
+.correct { background: #538d4e; }
+.present { background: #b59f3b; }
+.absent { background: #3a3a3c; }
+.hidden { display: none; }
