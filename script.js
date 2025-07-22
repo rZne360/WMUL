@@ -1,13 +1,16 @@
 
 // Paste your Firebase config below before using
 const firebaseConfig = {
-  apiKey: "",
-  authDomain: "",
-  databaseURL: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: "",
+  apiKey: "AIzaSyD_TBfmoZaYVGTQtblDMsUsNi_odpQKfQ4",
+  authDomain: "woodle-3eaa5.firebaseapp.com",
+  databaseURL: "https://woodle-3eaa5-default-rtdb.firebaseio.com",
+  projectId: "woodle-3eaa5",
+  storageBucket: "woodle-3eaa5.appspot.com",
+  messagingSenderId: "1058533729670",
+  appId: "1:1058533729670:web:d3275a6d307f97313ff807",
+  measurementId: "G-Z15B7QPMYV"
+};
+,
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
