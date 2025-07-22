@@ -1,50 +1,31 @@
-// ————— Replace these with your real Firebase project values —————
+// Firebase config
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
+  apiKey: "AIzaSyD_TBfmoZaYVGTQtblDMsUsNi_odpQKfQ4",
   authDomain: "woodle-3eaa5.firebaseapp.com",
   databaseURL: "https://woodle-3eaa5-default-rtdb.firebaseio.com",
   projectId: "woodle-3eaa5",
-  storageBucket: "woodle-3eaa5.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  storageBucket: "woodle-3eaa5.firebasestorage.app",
+  messagingSenderId: "1058533729670",
+  appId: "1:1058533729670:web:d3275a6d307f97313ff807"
 };
-
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// Game State
-let playerId = "";
-let playerName = "";
-let roomCode = "";
-let targetWord = "";
-let guesses = [];
+let playerId, playerName, roomCode, targetWord, guesses = [];
 
-// Predefined word lists
-const WORD_LIST = ["CRANE","SLATE","BRAVE","GHOST","LIGHT","STONE","PLANT","WATER","BRAIN","SHINE"];
-
-// Utility
-function randWord() {
-  return WORD_LIST[Math.floor(Math.random()*WORD_LIST.length)];
-}
-function genId() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2);
-}
-
-// ————— Lobby: room creation & joining —————
+// On-screen keyboard letters
+const KEYS = "QWERTYUIOPASDFGHJKLZXCVBNM".split("");
 
 function createRoom() {
   playerName = document.getElementById("playerName").value || "Player";
-  playerId = genId();
+  playerId = Date.now().toString(36);
   roomCode = Math.random().toString(36).substr(2,5).toUpperCase();
-  targetWord = randWord();
+  targetWord = getRandomWord();
 
   db.ref(`rooms/${roomCode}`).set({
     targetWord,
     status: "started",
-    players: {
-      [playerId]: { name: playerName, guesses: [], status: "active" }
-    }
+    players: { [playerId]: { name: playerName, guesses: [], status: "active" } }
   });
 
   startGame();
@@ -52,37 +33,41 @@ function createRoom() {
 
 function joinRoom() {
   playerName = document.getElementById("playerName").value || "Player";
-  playerId = genId();
-  const input = document.getElementById("roomCodeInput").value.trim().toUpperCase();
-  if (!input) return alert("Enter room code!");
+  playerId = Date.now().toString(36);
+  const code = document.getElementById("roomCodeInput").value.trim().toUpperCase();
+  if (!code) return alert("Enter a room code");
+  roomCode = code;
 
-  roomCode = input;
-  db.ref(`rooms/${roomCode}/currentWord`).once("value", snap => {
-    if (!snap.exists()) return alert("Room not found.");
+  db.ref(`rooms/${roomCode}/targetWord`).once("value", snap => {
+    if (!snap.exists()) return alert("Room not found");
     targetWord = snap.val();
-    db.ref(`rooms/${roomCode}/players/${playerId}`).set({
-      name: playerName, guesses: [], status: "active"
-    });
+    db.ref(`rooms/${roomCode}/players/${playerId}`)
+      .set({ name: playerName, guesses: [], status: "active" });
     startGame();
   });
 }
 
-// ————— Game Start & Real-time listening —————
-
 function startGame() {
   document.getElementById("lobby").classList.add("hidden");
-  document.getElementById("gameScreen").classList.remove("hidden");
-  document.getElementById("roomDisplay").innerText = roomCode;
+  document.getElementById("game").classList.remove("hidden");
+  document.getElementById("roomCodeDisplay").innerText = roomCode;
+  buildKeyboard();
+  listenPlayers();
   listenGuesses();
-
-  db.ref(`rooms/${roomCode}/players/${playerId}/status`)
-    .on("value", snap => {
-      if (snap.val() === "won") {
-        document.getElementById("status").innerText = "🎉 YOU WON!";
-      }
-    });
 }
 
+// Track players list
+function listenPlayers() {
+  db.ref(`rooms/${roomCode}/players`).on("value", snap => {
+    const html = [];
+    snap.forEach(child => {
+      html.push(`${child.val().name}: ${child.val().status}`);
+    });
+    document.getElementById("playersList").innerHTML = html.join("<br>");
+  });
+}
+
+// Track your guesses
 function listenGuesses() {
   db.ref(`rooms/${roomCode}/players/${playerId}/guesses`)
     .on("value", snap => {
@@ -91,41 +76,61 @@ function listenGuesses() {
     });
 }
 
-// ————— Submit Guess —————
-
+// Submit guess via input or keyboard
 function submitGuess() {
-  const val = document.getElementById("guessInput").value.trim().toUpperCase();
-  if (val.length !== 5) return alert("Enter a 5‑letter word");
-  guesses.push(val);
-  db.ref(`rooms/${roomCode}/players/${playerId}/guesses`)
-    .set(guesses);
-
-  if (val === targetWord) {
-    db.ref(`rooms/${roomCode}/players/${playerId}/status`)
-      .set("won");
-  }
-  document.getElementById("guessInput").value = "";
+  const val = document.getElementById("guessInput").value.toUpperCase();
+  if (val.length !== 5) return alert("Enter 5 letters");
+  saveGuess(val);
 }
 
-// ————— Render Wordle Tiles —————
+// Save guess to Firebase
+function saveGuess(word) {
+  guesses.push(word);
+  db.ref(`rooms/${roomCode}/players/${playerId}/guesses`)
+    .set(guesses);
+  if (word === targetWord) {
+    db.ref(`rooms/${roomCode}/players/${playerId}/status`).set("won");
+    document.getElementById("status").innerText = "🎉 You won!";
+  }
+}
 
+// Draw grid
 function renderBoard() {
-  const board = document.getElementById("grid");
-  board.innerHTML = "";
-
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
   guesses.forEach(word => {
-    for (let i = 0; i < 5; i++) {
-      const tile = document.createElement("div");
-      tile.classList.add("tile");
-
-      if (word[i] === targetWord[i]) tile.classList.add("correct");
-      else if (targetWord.includes(word[i])) tile.classList.add("present");
-      else tile.classList.add("absent");
-
-      tile.innerText = word[i];
-      board.appendChild(tile);
-    }
+    [...word].forEach((ch, i) => {
+      const div = document.createElement("div");
+      div.classList.add("tile");
+      div.textContent = ch;
+      if (ch === targetWord[i]) div.classList.add("correct");
+      else if (targetWord.includes(ch)) div.classList.add("present");
+      else div.classList.add("absent");
+      grid.appendChild(div);
+    });
   });
+}
+
+// Build mobile keyboard
+function buildKeyboard() {
+  const kb = document.getElementById("keyboard");
+  kb.innerHTML = "";
+  KEYS.forEach(key => {
+    const btn = document.createElement("div");
+    btn.className = "key";
+    btn.textContent = key;
+    btn.onclick = () => {
+      const inp = document.getElementById("guessInput");
+      if (inp.value.length < 5) inp.value += key;
+    };
+    kb.appendChild(btn);
+  });
+}
+
+// Random word
+function getRandomWord() {
+  const list = ["CRANE","SLATE","BRAVE","GHOST","LIGHT","STONE","PLANT"];
+  return list[Math.floor(Math.random() * list.length)];
 }
 
 
