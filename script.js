@@ -1,4 +1,4 @@
-// Firebase config
+ // Firebase config last time
 const firebaseConfig = {
   apiKey: "AIzaSyD_TBfmoZaYVGTQtblDMsUsNi_odpQKfQ4",
   authDomain: "woodle-3eaa5.firebaseapp.com",
