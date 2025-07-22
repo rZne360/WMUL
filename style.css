@@ -1,99 +1,76 @@
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f1f1f1;
-  color: #111;
+  font-family: sans-serif;
+  background: #f3f3f3;
 }
 
 .container {
-  max-width: 600px;
-  margin: 20px auto;
-  background: white;
-  padding: 15px;
-  border-radius: 8px;
-}
-
-.hidden { display: none; }
-
-.game-container {
   display: flex;
-  flex-direction: row;
   height: 100vh;
-  overflow: hidden;
+  flex-direction: row;
 }
 
 .sidebar {
-  width: 180px;
-  background: #f9f9f9;
-  padding: 15px;
-  border-right: 2px solid #ccc;
+  width: 200px;
+  background: #fff;
+  padding: 1rem;
+  border-right: 1px solid #ddd;
 }
 
-.players-list div {
-  padding: 5px;
-  border-bottom: 1px solid #ddd;
-  font-size: 14px;
+#players {
+  margin-top: 10px;
 }
 
-.main {
+.game-area {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 15px;
   justify-content: center;
   align-items: center;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(5, 50px);
-  gap: 4px;
-  justify-content: center;
-  margin: 15px 0;
-}
-
-.tile {
-  width: 50px; height: 50px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 20px; font-weight: bold; text-transform: uppercase;
-  background: #ddd; border: 2px solid #ccc;
-}
-
-.correct { background: #6aaa64; color: white; }
-.present { background: #c9b458; color: white; }
-.absent { background: #787c7e; color: white; }
-
-.mobile-input {
+#guess-form {
   display: flex;
-  justify-content: center;
-  margin: 10px 0;
-  width: 100%;
-  max-width: 500px;
+  flex-direction: row;
+  gap: 10px;
+  margin-top: 20px;
 }
 
-.mobile-input input {
-  padding: 10px; font-size: 16px; flex: 1;
+#guess-input {
+  padding: 10px;
+  font-size: 1rem;
+  width: 200px;
 }
 
-.mobile-input button {
-  padding: 10px 16px;
-  margin-left: 6px;
-  font-size: 16px;
+button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
 }
 
-.status {
-  margin-top: 10px;
-  font-weight: bold;
-}
-
+/* Responsive for mobile */
 @media (max-width: 600px) {
-  .game-container {
+  .container {
     flex-direction: column;
   }
+
   .sidebar {
     width: 100%;
     border-right: none;
-    border-bottom: 2px solid #ccc;
+    border-bottom: 1px solid #ddd;
+  }
+
+  #guess-form {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #guess-input {
+    width: 90%;
+  }
+
+  button {
+    width: 90%;
   }
 }
 
