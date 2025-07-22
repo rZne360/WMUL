@@ -5,12 +5,39 @@ body {
   color: #111;
 }
 
+.hidden {
+  display: none;
+}
+
+/* Join Screen */
+.centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.centered input {
+  padding: 10px;
+  margin: 10px;
+  font-size: 16px;
+  width: 250px;
+}
+
+.centered button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Game Layout */
 .container {
   display: flex;
   height: 100vh;
 }
 
-/* Sidebar with players and room info */
+/* Sidebar */
 .sidebar {
   width: 220px;
   background: white;
@@ -27,7 +54,7 @@ body {
   margin: 5px 0;
 }
 
-/* Main game area */
+/* Main content */
 .main {
   flex: 1;
   display: flex;
@@ -63,7 +90,7 @@ body {
 .present { background: #c9b458; color: white; }
 .absent  { background: #787c7e; color: white; }
 
-/* Input area */
+/* Input form */
 .mobile-input {
   display: flex;
   gap: 10px;
@@ -82,12 +109,7 @@ body {
   cursor: pointer;
 }
 
-/* Remove keyboard */
-.keyboard {
-  display: none;
-}
-
-/* Responsive design */
+/* Responsive */
 @media (max-width: 768px) {
   .container {
     flex-direction: column;
