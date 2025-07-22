@@ -8,18 +8,25 @@
 </head>
 <body>
   <div class="container">
-    <aside class="sidebar">
+    <div class="sidebar">
       <h2 id="room-name">Room: </h2>
-      <div id="players"></div>
-    </aside>
+      <div id="playersList">
+        <!-- Players will be listed here -->
+      </div>
+    </div>
 
-    <main class="game-area">
-      <form id="guess-form">
+    <div class="main">
+      <div class="grid" id="game-board">
+        <!-- Wordle tiles will appear here -->
+      </div>
+
+      <form id="guess-form" class="mobile-input">
         <input type="text" id="guess-input" maxlength="5" placeholder="Enter 5 letters" required />
         <button type="submit">Submit</button>
       </form>
-    </main>
+    </div>
   </div>
+
   <script src="app.js"></script>
 </body>
 </html>
