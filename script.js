@@ -1,5 +1,4 @@
-
-// Paste your Firebase config below before using
+// Your Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyD_TBfmoZaYVGTQtblDMsUsNi_odpQKfQ4",
   authDomain: "woodle-3eaa5.firebaseapp.com",
@@ -7,82 +6,55 @@ const firebaseConfig = {
   projectId: "woodle-3eaa5",
   storageBucket: "woodle-3eaa5.appspot.com",
   messagingSenderId: "1058533729670",
-  appId: "1:1058533729670:web:d3275a6d307f97313ff807",
-  measurementId: "G-Z15B7QPMYV"
+  appId: "1:1058533729670:web:d3275a6d307f97313ff807"
 };
-,
-};
+
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-let username = "", room = "", correctWord = "";
-let allowedWords = [];
-
-fetch('words.json')
-  .then(response => response.json())
-  .then(data => allowedWords = data);
+let roomCode = "";
+let solutionWord = "TREND"; // can be made dynamic later
 
 function joinRoom() {
-  username = document.getElementById('username').value.trim();
-  room = document.getElementById('room').value.trim();
-  if (!username || !room) return alert("Enter username and room name!");
-  document.getElementById('game').style.display = 'block';
-  setupRoom();
-}
+  roomCode = document.getElementById("roomCodeInput").value.toUpperCase();
+  if (!roomCode) return alert("Enter a room code");
 
-function setupRoom() {
-  const today = new Date().toISOString().slice(0, 10);
-  db.ref('rooms/' + room + '/wordDate').once('value', snap => {
-    if (snap.val() !== today) {
-      const word = allowedWords[Math.floor(Math.random() * allowedWords.length)];
-      db.ref('rooms/' + room).set({ word: word, wordDate: today, guesses: [] });
-    }
-  });
-  db.ref('rooms/' + room + '/guesses').on('value', snapshot => {
-    const guesses = snapshot.val() || [];
-    displayGuesses(guesses);
-  });
+  document.getElementById("roomDisplay").innerText = roomCode;
+  document.querySelector(".room-setup").classList.add("hidden");
+  document.getElementById("gameArea").classList.remove("hidden");
+
+  listenForGuesses();
 }
 
 function submitGuess() {
-  const input = document.getElementById('guessInput');
-  const guess = input.value.trim().toLowerCase();
-  if (guess.length !== 5 || !allowedWords.includes(guess)) {
-    alert("Invalid guess!");
+  const input = document.getElementById("guessInput");
+  const guess = input.value.trim().toUpperCase();
+
+  if (guess.length !== 5) {
+    alert("Please enter a 5-letter word.");
     return;
   }
-  db.ref('rooms/' + room + '/guesses').once('value', snap => {
-    const guesses = snap.val() || [];
-    db.ref('rooms/' + room + '/guesses').set([...guesses, { user: username, word: guess }]);
-  });
-  input.value = '';
+
+  const guessRef = db.ref(`game/${roomCode}/guesses`);
+  guessRef.push(guess);
+  input.value = "";
 }
 
-function displayGuesses(guesses) {
-  const board = document.getElementById('board');
-  board.innerHTML = '';
-  db.ref('rooms/' + room + '/word').once('value', snap => {
-    const correct = snap.val();
-    correctWord = correct;
-    guesses.forEach(g => {
-      for (let i = 0; i < 5; i++) {
-        const tile = document.createElement('div');
-        tile.className = 'tile';
-        tile.innerText = g.word[i];
-        if (g.word[i] === correct[i]) tile.classList.add('correct');
-        else if (correct.includes(g.word[i])) tile.classList.add('present');
-        else tile.classList.add('absent');
-        board.appendChild(tile);
-      }
-    });
-    const last = guesses[guesses.length - 1];
-    if (last && last.word === correct) {
-      document.getElementById('message').innerText = last.user + " wins!";
+function listenForGuesses() {
+  const guessRef = db.ref(`game/${roomCode}/guesses`);
+  guessRef.on("child_added", (data) => {
+    const guess = data.val();
+    displayGuess(guess);
+    if (guess === solutionWord) {
+      document.getElementById("messages").innerText = `🎉 Someone guessed it! The word was ${solutionWord}`;
     }
   });
 }
 
-function resetRoom() {
-  db.ref('rooms/' + room).remove();
-  location.reload();
+function displayGuess(word) {
+  const board = document.getElementById("board");
+  const div = document.createElement("div");
+  div.textContent = word;
+  board.appendChild(div);
 }
+
